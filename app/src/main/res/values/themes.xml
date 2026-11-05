@@ -1,0 +1,15 @@
+<resources>
+    <!-- Base theme. Compose draws everything; this only sets the window colors. -->
+    <style name="Theme.Nucleo" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/nucleo_bg</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+
+    <!-- Splash screen (Android 12+ SplashScreen API, back-ported by core-splashscreen). -->
+    <style name="Theme.Nucleo.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/nucleo_bg</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+        <item name="postSplashScreenTheme">@style/Theme.Nucleo</item>
+    </style>
+</resources>

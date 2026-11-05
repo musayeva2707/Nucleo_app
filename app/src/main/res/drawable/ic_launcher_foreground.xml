@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Original Nucleo icon: a four-point star, a tilted orbit ring, a small planet
+     and a thin spectrum stripe. Drawn on a 108dp adaptive-icon canvas. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Soft glow behind the star -->
+    <path android:pathData="M54,52m-22,0a22,22 0,1 1,44 0a22,22 0,1 1,-44 0">
+        <aapt:attr name="android:fillColor">
+            <gradient android:type="radial" android:centerX="54" android:centerY="52"
+                android:gradientRadius="22"
+                android:startColor="#B3FFB547" android:endColor="#00FFB547" />
+        </aapt:attr>
+    </path>
+    <!-- Orbit ring (tilted ellipse) -->
+    <group android:pivotX="54" android:pivotY="52" android:rotation="-22">
+        <path android:pathData="M24,52a30,10 0,1 0,60 0a30,10 0,1 0,-60 0"
+            android:strokeWidth="1.8" android:strokeColor="#99EEF1F8" android:fillColor="#00000000" />
+    </group>
+    <!-- Four-point star -->
+    <path android:fillColor="#FFF4E8"
+        android:pathData="M54,37l3,10q0.5,1.6 2.1,2.1L69,52l-9.9,2.9q-1.6,0.5 -2.1,2.1L54,67l-3,-10q-0.5,-1.6 -2.1,-2.1L39,52l9.9,-2.9q1.6,-0.5 2.1,-2.1z" />
+    <!-- Small planet -->
+    <path android:fillColor="#7C9CFF" android:pathData="M76,34m-3.5,0a3.5,3.5 0,1 1,7 0a3.5,3.5 0,1 1,-7 0" />
+    <!-- Spectrum stripe -->
+    <path android:pathData="M34,74h40v2.4h-40z">
+        <aapt:attr name="android:fillColor">
+            <gradient android:type="linear" android:startX="34" android:startY="75" android:endX="74" android:endY="75">
+                <item android:offset="0" android:color="#7A3CFF" />
+                <item android:offset="0.25" android:color="#2F7BFF" />
+                <item android:offset="0.45" android:color="#00C8FF" />
+                <item android:offset="0.6" android:color="#3DBE7A" />
+                <item android:offset="0.75" android:color="#FFE14D" />
+                <item android:offset="0.88" android:color="#FF7A1A" />
+                <item android:offset="1" android:color="#E01010" />
+            </gradient>
+        </aapt:attr>
+    </path>
+</vector>
