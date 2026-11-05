@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "uz.nucleo"
+    namespace = "com.nucleo"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "uz.nucleo"
+        applicationId = "com.nucleo"
         minSdk = 26
         targetSdk = 36
         versionCode = 1

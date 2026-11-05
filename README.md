@@ -24,9 +24,9 @@ Requirements: a recent Android Studio, JDK 17 or newer, Android SDK 36. If Andro
 
 **If you prefer to paste files into a new project:**
 
-1. Create a new project with the **Empty Activity** template. Name: `Nucleo`. Package name: `uz.nucleo`. Minimum SDK: API 26.
+1. Create a new project with the **Empty Activity** template. Name: `Nucleo`. Package name: `com.nucleo`. Minimum SDK: API 26.
 2. Replace `gradle/libs.versions.toml`, `app/build.gradle.kts` and `app/src/main/AndroidManifest.xml` with the ones from this repo.
-3. Copy everything in `app/src/main/java/uz/nucleo/` into the same folder of your project (delete the template's `MainActivity.kt` and `ui/theme` first).
+3. Copy everything in `app/src/main/java/com/nucleo/` into the same folder of your project (delete the template's `MainActivity.kt` and `ui/theme` first).
 4. Copy `app/src/main/res/` (fonts, icon, themes, backup rules) and `app/src/test/`.
 5. Sync Gradle and run.
 
@@ -44,7 +44,7 @@ Requirements: a recent Android Studio, JDK 17 or newer, Android SDK 36. If Andro
 The rule: **all game rules are pure Kotlin** in `game/` (no Android imports), so they are easy to read and unit-test. Screens only draw the state and call the ViewModel.
 
 ```
-app/src/main/java/uz/nucleo/
+app/src/main/java/com/nucleo/
 ├── MainActivity.kt        The only Activity: splash, game clock start/stop, share sheet, save-file picker
 ├── NucleoApp.kt           Navigation, bottom bar, snackbars, supernova overlay, "while you were away"
 ├── AppNavigator.kt        Every route and tab in one place (screens call nav.openCodex(), etc.)
