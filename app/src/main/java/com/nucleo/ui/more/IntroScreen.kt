@@ -48,6 +48,16 @@ private val panels = listOf(
     "In the beginning, the universe was almost only hydrogen and helium.",
     "Stars turned it into everything else.",
     "Your job: build a universe that can make life.",
+    "How to play",
+)
+
+/** The last intro panel: the whole game loop in five short steps. */
+private val loopSteps = listOf(
+    "Stars" to "Tap the nebula for hydrogen and form stars. They make new elements.",
+    "Spectrum" to "Name each new element in a quick puzzle to unlock it.",
+    "Reaction" to "Mix elements into molecules, fuel and planet parts.",
+    "Missions" to "Build planets and fling probes with gravity.",
+    "Telescope" to "Sort galaxies to make your stars stronger.",
 )
 
 /** 4.1 First-launch intro: 3 swipeable panels, then straight into the Forge. No account step. */
@@ -67,18 +77,22 @@ fun IntroScreen(onFinish: () -> Unit) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(40.dp, Alignment.CenterVertically),
             ) {
-                Canvas(Modifier.size(280.dp).semantics { contentDescription = panels[page] }) {
-                    when (page) {
-                        0 -> drawHydrogenCloud()
-                        1 -> drawStarMakingElements()
-                        else -> drawOceanPlanet()
+                if (page == panels.lastIndex) {
+                    HowToPlayPanel()
+                } else {
+                    Canvas(Modifier.size(280.dp).semantics { contentDescription = panels[page] }) {
+                        when (page) {
+                            0 -> drawHydrogenCloud()
+                            1 -> drawStarMakingElements()
+                            else -> drawOceanPlanet()
+                        }
                     }
+                    Text(panels[page], style = NucleoType.title.copy(fontSize = NucleoType.title.fontSize * 1.15f), textAlign = TextAlign.Center)
                 }
-                Text(panels[page], style = NucleoType.title.copy(fontSize = NucleoType.title.fontSize * 1.15f), textAlign = TextAlign.Center)
             }
         }
         Row(Modifier.fillMaxWidth().padding(start = 32.dp, end = 24.dp, bottom = 32.dp).height(64.dp), verticalAlignment = Alignment.CenterVertically) {
-            Row(Modifier.weight(1f).semantics { contentDescription = "Panel ${pager.currentPage + 1} of 3" }, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row(Modifier.weight(1f).semantics { contentDescription = "Panel ${pager.currentPage + 1} of ${panels.size}" }, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 repeat(panels.size) { i ->
                     val active = i == pager.currentPage
                     Box(Modifier.size(width = if (active) 24.dp else 8.dp, height = 8.dp).clip(RoundedCornerShape(4.dp))
@@ -91,6 +105,27 @@ fun IntroScreen(onFinish: () -> Unit) {
                 PrimaryButton("Begin", onClick = onFinish, icon = Icons.AutoMirrored.Rounded.ArrowForward)
             }
         }
+    }
+}
+
+@Composable
+private fun HowToPlayPanel() {
+    Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
+        Text("How to play", style = NucleoType.title)
+        loopSteps.forEachIndexed { i, (tab, text) ->
+            Row(verticalAlignment = Alignment.Top) {
+                Text("${i + 1}", style = NucleoType.cardTitle, color = NucleoColors.OnAccent, textAlign = TextAlign.Center,
+                    modifier = Modifier.size(30.dp).clip(RoundedCornerShape(15.dp)).background(NucleoColors.Forge))
+                Column(Modifier.padding(start = 12.dp)) {
+                    Text(tab, style = NucleoType.cardTitle)
+                    Text(text, style = NucleoType.bodySmall, color = NucleoColors.TextSecondary)
+                }
+            }
+        }
+        Text(
+            "Not sure what to do? The gold \"Your goal\" card at the top of every tab always shows your next step.",
+            style = NucleoType.bodySmall, color = NucleoColors.Forge,
+        )
     }
 }
 

@@ -1,5 +1,8 @@
 package com.nucleo.ui.reaction
 
+import com.nucleo.Tab
+import com.nucleo.ui.components.LabExplainer
+import com.nucleo.ui.components.TabGoal
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -93,6 +96,8 @@ fun ReactionScreen(vm: GameViewModel, nav: AppNavigator) {
 
     Column(Modifier.fillMaxSize().starrySky().verticalScroll(rememberScrollState())) {
         LabTopBar("Reaction", state.rp, nav::openAchievements, nav::openCodex, nav::openUpgrades, nav::openSettings)
+        LabExplainer("Combine elements you have identified into molecules, rocket fuel and planet materials.")
+        TabGoal(state, nav, Tab.REACTION)
         Row(Modifier.fillMaxWidth().padding(20.dp, 8.dp, 12.dp, 8.dp), verticalAlignment = Alignment.CenterVertically) {
             Text("Reactor · $SLOT_COUNT slots", style = NucleoType.section, modifier = Modifier.weight(1f))
             Row(
@@ -111,6 +116,14 @@ fun ReactionScreen(vm: GameViewModel, nav: AppNavigator) {
             onRemove = { slots.removeAt(it); feedback = null },
         )
 
+        if (slots.isEmpty()) {
+            Text(
+                "How it works: tap 1 to 4 ingredients in the tray below to put them in the reactor, then tap React. " +
+                    "Try H and O first (that makes water). Unknown combinations are safe to try: they cost nothing.",
+                style = NucleoType.bodySmall, color = NucleoColors.TextSecondary,
+                modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 8.dp),
+            )
+        }
         Column(Modifier.padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             if (hasBench) {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.semantics { contentDescription = "Batch size" }) {

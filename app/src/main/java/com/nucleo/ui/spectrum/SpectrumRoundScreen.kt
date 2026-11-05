@@ -97,10 +97,11 @@ fun SpectrumRoundScreen(vm: GameViewModel, nav: AppNavigator) {
         ) {
             item { SignalStrip(r) }
             if (r.hints.isNotEmpty()) item { HintRow(r) }
+            if (r.guesses.isEmpty()) item { HowToGuess(r) }
             item {
                 Row(Modifier.padding(horizontal = 20.dp), verticalAlignment = Alignment.Bottom) {
                     Text("Guesses", style = NucleoType.section, modifier = Modifier.weight(1f))
-                    Text("newest last", style = NucleoType.caption, color = NucleoColors.TextSecondary)
+                    Text("✓ same · ~ close · × different", style = NucleoType.caption, color = NucleoColors.TextSecondary)
                 }
             }
             items(r.guesses) { g -> GuessCard(g, r, r.guesses.indexOf(g) + 1) }
@@ -128,6 +129,30 @@ fun SpectrumRoundScreen(vm: GameViewModel, nav: AppNavigator) {
             },
             onClose = { vm.closeRound(); nav.back() },
         )
+    }
+}
+
+/** Shown before the first guess: what the puzzle is and how to read the clues. */
+@Composable
+private fun HowToGuess(r: SpectrumRound) {
+    val clue = LocalClueColors.current
+    val goal = if (r.mode == Mode.SIGNAL) "A new element appeared in your stars. Which one is it?"
+    else "A hidden ${if (r.pool == Pool.ELEMENTS) "element" else "molecule"} is waiting. Find it in ${r.maxGuesses} guesses."
+    Column(
+        Modifier.padding(horizontal = 16.dp).fillMaxWidth().clip(RoundedCornerShape(18.dp))
+            .background(NucleoColors.Spectrum.copy(alpha = 0.1f)).padding(14.dp),
+        verticalArrangement = Arrangement.spacedBy(6.dp),
+    ) {
+        Text(goal, style = NucleoType.cardTitle)
+        Text("1. Type any ${if (r.pool == Pool.ELEMENTS) "element (try \"Iron\" or \"O\")" else "molecule"} in the box below and tap it.", style = NucleoType.bodySmall)
+        Text("2. Each box compares your guess with the answer:", style = NucleoType.bodySmall)
+        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            Text("✓ same", style = NucleoType.labelSmall, color = NucleoColors.OnAccent, modifier = Modifier.background(clue.exact, RoundedCornerShape(8.dp)).padding(horizontal = 8.dp, vertical = 4.dp))
+            Text("~ close", style = NucleoType.labelSmall, color = NucleoColors.OnAccent, modifier = Modifier.background(clue.close, RoundedCornerShape(8.dp)).padding(horizontal = 8.dp, vertical = 4.dp))
+            Text("× different", style = NucleoType.labelSmall, modifier = Modifier.background(clue.wrong, RoundedCornerShape(8.dp)).padding(horizontal = 8.dp, vertical = 4.dp))
+        }
+        Text("3. Arrows ↑ ↓ on numbers tell you if the answer is higher or lower. Use the clues to narrow it down.", style = NucleoType.bodySmall)
+        if (r.pool == Pool.ELEMENTS) Text("The rainbow strip above shows the colors the answer glows in.", style = NucleoType.caption, color = NucleoColors.TextSecondary)
     }
 }
 

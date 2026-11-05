@@ -1,5 +1,8 @@
 package com.nucleo.ui.forge
 
+import com.nucleo.Tab
+import com.nucleo.ui.components.LabExplainer
+import com.nucleo.ui.components.TabGoal
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -62,7 +65,6 @@ import com.nucleo.content.Elements
 import com.nucleo.content.Era
 import com.nucleo.content.Remnant
 import com.nucleo.content.StarTypeId
-import com.nucleo.content.StarTypes
 import com.nucleo.content.Upgrades
 import com.nucleo.game.ForgeEngine
 import com.nucleo.game.GameState
@@ -100,8 +102,9 @@ fun ForgeScreen(vm: GameViewModel, nav: AppNavigator) {
     Box(Modifier.fillMaxSize().starrySky()) {
         Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
             LabTopBar("Forge", state.rp, nav::openAchievements, nav::openCodex, nav::openUpgrades, nav::openSettings)
+            LabExplainer("Stars burn hydrogen and turn it into new elements. Big stars explode and spread them.")
+            TabGoal(state, nav, Tab.FORGE)
             EraCard(state)
-            if (state.stats.starsFormed == 0) TutorialHint(state)
             Nebula(state, onTap = {
                 vm.tapNebula()
                 if (hapticsOn) haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
@@ -144,23 +147,35 @@ fun ForgeScreen(vm: GameViewModel, nav: AppNavigator) {
     }
 }
 
-/** Header strip: era name and a log-scale metallicity bar with both thresholds marked. */
+/** Plain-language name, era number and what the next era unlocks. */
+private fun eraInfo(era: Era): Triple<String, String, String?> = when (era) {
+    Era.POP_III -> Triple("Era 1 of 3 · The first stars", "Only massive stars can form.", "Era 2 at 0.1%: Sun-like stars, red dwarfs and more star slots")
+    Era.POP_II -> Triple("Era 2 of 3 · Second-generation stars", "All star types can form.", "Era 3 at 1%: planets and Missions")
+    Era.POP_I -> Triple("Era 3 of 3 · Stars with planets", "Planets can form. Missions are open.", null)
+}
+
+/**
+ * Header strip: which era the universe is in, and how much of the galaxy's gas has been turned into
+ * heavy elements (astronomers call this "metallicity"). The bar is on a log scale so both eras fit.
+ */
 @Composable
 private fun EraCard(state: GameState) {
     val z = Progression.metallicity(state)
     val era = Progression.era(state)
-    // Log scale: 0.0001 → 0%, 0.001 → 33%, 0.01 → 67%, 0.1 → 100%.
+    val (title, now, next) = eraInfo(era)
+    // Log scale: 0.01% → 0, 0.1% → 1/3, 1% → 2/3, 10% → full.
     val fraction = if (z <= 0) 0f else ((log10(z) + 4) / 3).toFloat().coerceIn(0f, 1f)
 
     SectionCard(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp), padding = PaddingValues(16.dp, 14.dp, 16.dp, 12.dp)) {
-        Row(verticalAlignment = Alignment.Bottom) {
-            Text(era.label, style = NucleoType.cardTitle, modifier = Modifier.weight(1f))
-            Text("Metallicity ", style = NucleoType.labelSmall, color = NucleoColors.TextSecondary)
-            Text("Z %.4f".format(z), style = NucleoType.numberMedium, color = NucleoColors.Forge)
+        Text(title, style = NucleoType.cardTitle)
+        Text(now, style = NucleoType.labelSmall, color = NucleoColors.TextSecondary)
+        Row(Modifier.padding(top = 10.dp), verticalAlignment = Alignment.Bottom) {
+            Text("Heavy elements in your galaxy", style = NucleoType.labelSmall, modifier = Modifier.weight(1f))
+            Text("%.2f%%".format(z * 100), style = NucleoType.numberMedium, color = NucleoColors.Forge)
         }
         Box(
-            Modifier.fillMaxWidth().padding(top = 12.dp, bottom = 6.dp).height(16.dp)
-                .semantics { contentDescription = "Metallicity bar, log scale. Population II at 0.001, Population I at 0.01" },
+            Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 6.dp).height(16.dp)
+                .semantics { contentDescription = "Heavy elements %.2f percent. Era 2 starts at 0.1 percent, era 3 at 1 percent".format(z * 100) },
             contentAlignment = Alignment.CenterStart,
         ) {
             ProgressBar(fraction, NucleoColors.Forge)
@@ -173,33 +188,14 @@ private fun EraCard(state: GameState) {
             }
         }
         Row {
-            Text("Pop III", style = NucleoType.tiny, color = NucleoColors.TextSecondary, modifier = Modifier.weight(1f))
-            Text("Pop II · 0.001", style = NucleoType.tiny, color = if (era == Era.POP_II) NucleoColors.Forge else NucleoColors.TextSecondary, modifier = Modifier.weight(1f))
-            Text("Pop I · 0.01", style = NucleoType.tiny, color = if (era == Era.POP_I) NucleoColors.Forge else NucleoColors.TextSecondary, modifier = Modifier.weight(1f))
+            Text("Era 1", style = NucleoType.tiny, color = if (era == Era.POP_III) NucleoColors.Forge else NucleoColors.TextSecondary, modifier = Modifier.weight(1f))
+            Text("Era 2 · 0.1%", style = NucleoType.tiny, color = if (era == Era.POP_II) NucleoColors.Forge else NucleoColors.TextSecondary, modifier = Modifier.weight(1f))
+            Text("Era 3 · 1%", style = NucleoType.tiny, color = if (era == Era.POP_I) NucleoColors.Forge else NucleoColors.TextSecondary, modifier = Modifier.weight(1f))
         }
-        Progression.nextStage(state)?.let { stage ->
-            Box(Modifier.fillMaxWidth().padding(top = 10.dp).height(1.dp).background(NucleoColors.Divider))
-            Text(
-                "Next stage: ${stage.name} · ${stage.trigger}",
-                style = NucleoType.labelSmall, color = NucleoColors.TextSecondary, modifier = Modifier.padding(top = 10.dp),
-            )
+        if (next != null) {
+            Text("Next: $next", style = NucleoType.caption, color = NucleoColors.TextSecondary, modifier = Modifier.padding(top = 8.dp))
         }
     }
-}
-
-@Composable
-private fun TutorialHint(state: GameState) {
-    val cost = Progression.starCost(state, StarTypes.MASSIVE)
-    val text = if (state.amount(1) < cost) {
-        "Tap the nebula to gather hydrogen. Your first massive star costs only $cost H."
-    } else {
-        "You have enough hydrogen. Tap \"Form star\" below to light your first star."
-    }
-    Text(
-        text, style = NucleoType.labelSmall, color = NucleoColors.Forge,
-        modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp).fillMaxWidth()
-            .clip(RoundedCornerShape(14.dp)).background(NucleoColors.Forge.copy(alpha = 0.1f)).padding(12.dp),
-    )
 }
 
 /** The nebula: tap to gather hydrogen. Shows a floating "+5 H" on each tap. */
@@ -418,7 +414,11 @@ private fun LockedSlot(slot: Int, state: GameState, modifier: Modifier, onClick:
 private fun Remnants(state: GameState, onMerge: (Remnant) -> Unit) {
     if (state.whiteDwarfs == 0 && state.neutronStars == 0 && state.mergers.isEmpty()) return
     SectionCard(Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, top = 12.dp)) {
-        Text("Remnants", style = NucleoType.numberMedium, modifier = Modifier.padding(bottom = 8.dp))
+        Text("Remnants", style = NucleoType.numberMedium)
+        Text(
+            "What's left when stars die. Merge two of the same kind for a rare explosion that makes gold, iron and more.",
+            style = NucleoType.caption, color = NucleoColors.TextSecondary, modifier = Modifier.padding(top = 2.dp, bottom = 8.dp),
+        )
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             RemnantItem(Remnant.WHITE_DWARF, state.whiteDwarfs, Modifier.weight(1f)) { onMerge(Remnant.WHITE_DWARF) }
             RemnantItem(Remnant.NEUTRON_STAR, state.neutronStars, Modifier.weight(1f)) { onMerge(Remnant.NEUTRON_STAR) }

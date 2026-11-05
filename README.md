@@ -95,7 +95,7 @@ Every tuning number lives in `content/` (star rates, costs, recipe amounts, miss
 ./gradlew test
 ```
 
-26 JVM tests cover the Forge simulation (closed form vs. step-by-step), first-supernova pacing, Spectrum scoring, the shuffle bag and repeats, recipes, orbit physics (energy conservation, determinism), upgrade costs, and an automatic solver that proves every mission can be cleared at par fuel.
+28 JVM tests cover the step-by-step guide, the Forge simulation (closed form vs. step-by-step), first-supernova pacing, Spectrum scoring, the shuffle bag and repeats, recipes, orbit physics (energy conservation, determinism), upgrade costs, and an automatic solver that proves every mission can be cleared at par fuel.
 
 ---
 

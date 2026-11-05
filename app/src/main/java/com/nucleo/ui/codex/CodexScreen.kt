@@ -123,7 +123,7 @@ private fun ElementsTab(state: GameState, onElement: (Int) -> Unit) {
                         ) {
                             Text(
                                 if (signal) "?" else element.symbol,
-                                fontSize = 7.sp, color = if (known) NucleoColors.OnAccent else NucleoColors.TextSecondary.copy(alpha = 0.6f),
+                                fontSize = 8.sp, color = if (known) NucleoColors.OnAccent else NucleoColors.TextSecondary.copy(alpha = 0.6f),
                                 textAlign = TextAlign.Center, maxLines = 1,
                             )
                         }

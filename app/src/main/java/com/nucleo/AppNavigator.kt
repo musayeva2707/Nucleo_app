@@ -10,6 +10,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavHostController
 import com.nucleo.game.GameState
+import com.nucleo.game.GoalPlace
 import com.nucleo.game.Mode
 import com.nucleo.game.Pool
 import com.nucleo.game.Progression
@@ -45,7 +46,7 @@ enum class Tab(val route: String, val label: String, val icon: ImageVector, val 
     fun lockReason(state: GameState): String? = when (this) {
         FORGE, SPECTRUM -> null
         REACTION -> if (Progression.reactionUnlocked(state)) null else "Unlocks when: you identify carbon and oxygen"
-        MISSIONS -> if (Progression.missionsUnlocked(state)) null else "Unlocks when: metallicity reaches 0.01 (Population I)"
+        MISSIONS -> if (Progression.missionsUnlocked(state)) null else "Unlocks in era 3: heavy elements in your galaxy must reach 1%"
         TELESCOPE -> if (Progression.telescopeUnlocked(state)) null else "Unlocks when: you buy First Telescope (500 RP)"
     }
 }
@@ -67,6 +68,22 @@ class AppNavigator(private val nav: NavHostController, private val vm: GameViewM
             launchSingleTop = true
             restoreState = true
         }
+    }
+
+    /**
+     * What the goal card's "Go" button does, or null when the player is already on the right tab
+     * (then the card just explains what to do here).
+     */
+    fun goalAction(place: GoalPlace?, here: Tab): (() -> Unit)? = when (place) {
+        null, GoalPlace.FORGE -> if (here == Tab.FORGE) null else ::openForge
+        GoalPlace.SIGNALS -> ::openSignalRound
+        GoalPlace.SPECTRUM -> if (here == Tab.SPECTRUM) null else { { openTab(Tab.SPECTRUM) } }
+        GoalPlace.REACTION -> if (here == Tab.REACTION) null else ::openReaction
+        GoalPlace.UPGRADES -> ::openUpgrades
+        GoalPlace.HANGAR -> ::openHangar
+        GoalPlace.MISSIONS -> if (here == Tab.MISSIONS) null else { { openTab(Tab.MISSIONS) } }
+        GoalPlace.TELESCOPE -> if (here == Tab.TELESCOPE) null else ::openTelescope
+        GoalPlace.HOME_SYSTEM -> ::openHomeSystem
     }
 
     fun openForge() = openTab(Tab.FORGE)

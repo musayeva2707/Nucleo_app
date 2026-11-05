@@ -28,7 +28,7 @@ object Economy {
     }
 
     private fun lockReason(state: GameState, upgrade: Upgrade): String? = when (upgrade.id) {
-        Upgrades.STAR_NURSERY -> if (Progression.era(state) < Era.POP_II) "Needs Population II" else null
+        Upgrades.STAR_NURSERY -> if (Progression.era(state) < Era.POP_II) "Unlocks in era 2" else null
         Upgrades.TELESCOPE_2 -> if (!state.hasUpgrade(Upgrades.TELESCOPE_1)) "Needs First Telescope" else null
         Upgrades.PARTICLE_ACCELERATOR -> if (!state.endingSeen) "After the ending" else null
         else -> null

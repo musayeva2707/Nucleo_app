@@ -75,7 +75,7 @@ fun StarPickerSheet(state: GameState, slot: Int, onForm: (StarType) -> Unit, onD
         Column(Modifier.padding(horizontal = 16.dp).navigationBarsPadding().verticalScroll(rememberScrollState())) {
             Text("Form a star", style = NucleoType.title, modifier = Modifier.padding(start = 4.dp, top = 8.dp))
             Text(
-                "Slot ${slot + 1} · you have ${Format.int(state.amount(1))} H",
+                "Pick a type. Bigger stars cost more hydrogen but make heavier elements. You have ${Format.int(state.amount(1))} H.",
                 style = NucleoType.labelSmall, color = NucleoColors.TextSecondary, modifier = Modifier.padding(start = 4.dp, bottom = 16.dp),
             )
             StarTypes.all.forEach { type ->
@@ -119,7 +119,7 @@ private fun StarTypeCard(state: GameState, type: StarType, selected: Boolean, on
             StarGlyph(NucleoColors.star(type.id), 40.dp, Modifier.alpha(if (eraOk) 1f else 0.55f))
             Column(Modifier.weight(1f)) {
                 Text(type.label, style = NucleoType.cardTitle, color = if (eraOk) NucleoColors.TextPrimary else NucleoColors.TextSecondary)
-                Text("${type.massSolar} M☉ · ${if (type.minEra == Era.POP_III) "every era" else "Population II+"}",
+                Text("${type.massSolar} × the Sun's mass · ${if (type.minEra == Era.POP_III) "any era" else "from era 2"}",
                     style = NucleoType.caption, color = NucleoColors.TextSecondary)
             }
             Chip(
@@ -132,7 +132,7 @@ private fun StarTypeCard(state: GameState, type: StarType, selected: Boolean, on
         InfoLine("Makes", type.makesText)
         type.endsAsText?.let { InfoLine("Ends as", it) }
         when {
-            !eraOk -> Warning("Needs metallicity 0.001")
+            !eraOk -> Warning("Unlocks in era 2 (0.1% heavy elements). Make supernovae first.")
             !affordable -> Warning("Need ${Format.int(cost - state.amount(1))} more H")
         }
     }

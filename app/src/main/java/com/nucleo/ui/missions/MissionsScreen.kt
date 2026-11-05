@@ -1,5 +1,8 @@
 package com.nucleo.ui.missions
 
+import com.nucleo.Tab
+import com.nucleo.ui.components.LabExplainer
+import com.nucleo.ui.components.TabGoal
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -77,6 +80,8 @@ fun MissionsScreen(vm: GameViewModel, nav: AppNavigator) {
 
     Column(Modifier.fillMaxSize().starrySky().verticalScroll(rememberScrollState())) {
         LabTopBar("Missions", state.rp, nav::openAchievements, nav::openCodex, nav::openUpgrades, nav::openSettings)
+        LabExplainer("Launch a probe and use the pull of planets and stars to curve it into the red target ring.")
+        TabGoal(state, nav, Tab.MISSIONS)
         Row(Modifier.horizontalScroll(rememberScrollState()).padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             FilterChip("1 · Inner Neighborhood", true, {}, accent = NucleoColors.Missions)
             FilterChip("2 · Galactic Disk · v1.1", false, {}, enabled = false)

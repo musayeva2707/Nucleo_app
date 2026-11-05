@@ -1,5 +1,8 @@
 package com.nucleo.ui.spectrum
 
+import com.nucleo.Tab
+import com.nucleo.ui.components.LabExplainer
+import com.nucleo.ui.components.TabGoal
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -61,6 +64,8 @@ fun SpectrumHomeScreen(vm: GameViewModel, nav: AppNavigator) {
 
     Column(Modifier.fillMaxSize().starrySky().verticalScroll(rememberScrollState())) {
         LabTopBar("Spectrum", state.rp, nav::openAchievements, nav::openCodex, nav::openUpgrades, nav::openSettings)
+        LabExplainer("Every element glows in its own colors. Guess elements from their clues to identify them and earn research points (RP).")
+        TabGoal(state, nav, Tab.SPECTRUM)
 
         if (state.signals.isNotEmpty()) {
             SignalsCard(state.signals.size) {
@@ -145,13 +150,13 @@ private fun SignalsCard(count: Int, onIdentify: () -> Unit) {
                 Text("?", style = NucleoType.title, color = NucleoColors.Spectrum, modifier = Modifier.alpha(pulse))
             }
             Column(Modifier.weight(1f)) {
-                Text("$count unknown signal${if (count == 1) "" else "s"}", style = NucleoType.cardTitle)
+                Text("$count new element${if (count == 1) "" else "s"} to identify", style = NucleoType.cardTitle)
                 Text("Identify them to use those elements in Reaction Lab.", style = NucleoType.caption, color = NucleoColors.TextSecondary)
             }
         }
         PrimaryButton("Identify", onClick = onIdentify, color = NucleoColors.Spectrum, modifier = Modifier.fillMaxWidth().padding(top = 12.dp), height = 48.dp)
         Text(
-            "Signal mode · 8 guesses, no fail state · +${SpectrumEngine.SIGNAL_RP} RP each",
+            "8 guesses, then extra clues: you can't lose · +${SpectrumEngine.SIGNAL_RP} RP each",
             style = NucleoType.caption, color = NucleoColors.TextSecondary, modifier = Modifier.padding(top = 8.dp),
         )
     }

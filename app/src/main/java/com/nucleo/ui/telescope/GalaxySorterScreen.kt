@@ -1,5 +1,8 @@
 package com.nucleo.ui.telescope
 
+import com.nucleo.Tab
+import com.nucleo.ui.components.LabExplainer
+import com.nucleo.ui.components.TabGoal
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -76,6 +79,8 @@ fun GalaxySorterScreen(vm: GameViewModel, nav: AppNavigator) {
 
     Column(Modifier.fillMaxSize().starrySky().verticalScroll(rememberScrollState())) {
         LabTopBar("Telescope", state.rp, nav::openAchievements, nav::openCodex, nav::openUpgrades, nav::openSettings)
+        LabExplainer("Sort real kinds of galaxies by their shape. Every right answer makes your stars stronger.")
+        TabGoal(state, nav, Tab.TELESCOPE)
         when {
             night == null -> NightStart(state, onStart = vm::startNight, onMap = nav::openUniverseMap)
             GalaxyEngine.isNightOver(state) -> NightSummary(state, onDone = vm::finishNight, onMap = { vm.finishNight(); nav.openUniverseMap() }, onCodex = nav::openCodexGalaxies)
